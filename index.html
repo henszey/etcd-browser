@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html ng-app="app">
 <head>
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular.min.js"></script>
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
-<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 <link href="angular-xeditable/css/xeditable.css" rel="stylesheet">
 <script src="angular-xeditable/js/xeditable.js"></script>
 <link rel="stylesheet" href="main.css">
@@ -58,7 +56,7 @@
     <h1 class="warning">etcd browser</h1>
     <form ng-submit="submit()">
       <div class="input-group" ng-submit="submit()">
-        <input type="text" class="form-control" ng-model="urlPrefix" placeholder="https://etcd-leader.bkedev.com/v2/keys">
+        <input type="text" class="form-control" ng-model="urlPrefix" placeholder="http://localhost:4001/v2/keys">
         <span class="input-group-btn">
           <button class="btn btn-default" type="submit">Go!</button>
         </span>

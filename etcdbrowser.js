@@ -2,6 +2,7 @@
 var app = angular.module("app", ["xeditable"]);
 
 app.controller('NodeCtrl', ['$scope','$http', function($scope,$http) {
+  $scope.urlPrefix = "http://localhost:4001/v2/keys";
 
   $scope.setActiveNode = function(node){
     $scope.activeNode = node;
@@ -16,7 +17,6 @@ app.controller('NodeCtrl', ['$scope','$http', function($scope,$http) {
     $scope.error = "Request failed";
   }
 
-  $scope.urlPrefix = "http://127.0.0.1:4001/v2/keys";
   $scope.loadNode = function(node){
     delete $scope.error;
     $http({method: 'GET', url: $scope.urlPrefix + node.key}).
@@ -51,66 +51,54 @@ app.controller('NodeCtrl', ['$scope','$http', function($scope,$http) {
     var name = prompt("Enter Property Name", "");
     var value = prompt("Enter Property value", "");
     if(!name || name == "") return;
-    $.ajax({
-        type: "PUT",
-        url: $scope.urlPrefix + node.key + (node.key != "/" ? "/" : "") + name,
-        data: {"value": value},
-        contentType: 'application/x-www-form-urlencoded',
-        success: function(){
-          $scope.loadNode(node);
-        }
-    });
+
+    $http({method: 'PUT', 
+    	   url: $scope.urlPrefix + node.key + (node.key != "/" ? "/" : "") + name, 
+    	   params: {"value": value}}).
+    success(function(data) {
+      $scope.loadNode(node);
+    }).
+    error(errorHandler);
   }
 
   $scope.updateNode = function(node,value){
-    $.ajax({
-        type: "PUT",
-        url: $scope.urlPrefix + node.key,
-        data: {"value": value},
-        contentType: 'application/x-www-form-urlencoded',
-        success: function(){
-          $scope.loadNode(node);
-        }
-    });
+    $http({method: 'PUT', 
+      url: $scope.urlPrefix + node.key, 
+      params: {"value": value}}).
+    success(function(data) {
+      $scope.loadNode(node);
+    }).
+    error(errorHandler);
   }
 
   $scope.deleteNode = function(node){
-    $.ajax({
-        type: "DELETE",
-        url: $scope.urlPrefix + node.key,
-        contentType: 'application/x-www-form-urlencoded',
-        success: function(){
-          $scope.loadNode(node.parent);
-        }
-    });
+    $http({method: 'DELETE', url: $scope.urlPrefix + node.key}).
+    success(function(data) {
+      $scope.loadNode(node.parent);
+    }).
+    error(errorHandler);
   }
 
   $scope.copyNode = function(node){
     var dirName = prompt("Copy property to directory","/");
     if(!dirName || dirName == "") return;
     dirName = $scope.formatDir(dirName);
-    $.ajax({
-      type: "PUT",
-      url: $scope.urlPrefix + dirName + node.name,
-      data: {"value": node.value},
-      contentType: 'application/x-www-form-urlencoded',
-      success: function(){
-      }
-    });
+    $http({method: 'PUT', 
+      url: $scope.urlPrefix + dirName + node.name, 
+      params: {"value": node.value}}).
+    error(errorHandler);
   }
 
   $scope.createDir = function(node){
     var dirName = prompt("Enter Directory Name", "");
     if(!dirName || dirName == "") return;
-    $.ajax({
-        type: "PUT",
-        url: $scope.urlPrefix + node.key + (node.key != "/" ? "/" : "") + dirName,
-        data: {"dir": true},
-        contentType: 'application/x-www-form-urlencoded',
-        success: function(){
-          $scope.loadNode(node);
-        }
-    });
+    $http({method: 'PUT', 
+      url: $scope.urlPrefix + node.key + (node.key != "/" ? "/" : "") + dirName, 
+      params: {"dir": true}}).
+    success(function(data) {
+      $scope.loadNode(node);
+    }).
+    error(errorHandler);
   }
 
   $scope.copyDir = function(node){
@@ -118,14 +106,10 @@ app.controller('NodeCtrl', ['$scope','$http', function($scope,$http) {
     if(!dirName || dirName == "") return;
     dirName = $scope.formatDir(dirName);
     for(var key in node.nodes){
-      $.ajax({
-        type: "PUT",
-        url: $scope.urlPrefix + dirName + node.nodes[key].name,
-        data: {"value": node.nodes[key].value},
-        contentType: 'application/x-www-form-urlencoded',
-        success: function(){
-        }
-      });
+      $http({method: 'PUT', 
+        url: $scope.urlPrefix + dirName + node.nodes[key].name, 
+        params: {"value": node.nodes[key].value}}).
+      error(errorHandler);
     }
   }
 
@@ -135,14 +119,12 @@ app.controller('NodeCtrl', ['$scope','$http', function($scope,$http) {
       return;
     }
     if(!confirm("Are you sure you want to delete " + node.key)) return;
-    $.ajax({
-      type: "DELETE",
-      url: $scope.urlPrefix + node.key + "?dir=true",
-      contentType: 'application/x-www-form-urlencoded',
-        success: function(){
-          $scope.loadNode(node.parent);
-        }
-    });
+    $http({method: 'DELETE', 
+      url: $scope.urlPrefix + node.key + "?dir=true"}).
+    success(function(data) {
+      $scope.loadNode(node.parent);
+    }).
+    error(errorHandler);
   }
 
   $scope.formatDir = function(dirName){
