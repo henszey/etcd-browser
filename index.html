@@ -2,8 +2,14 @@
 <html ng-app="app">
 <head>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap-theme.min.css">
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+
 <link href="angular-xeditable/css/xeditable.css" rel="stylesheet">
 <script src="angular-xeditable/js/xeditable.js"></script>
 <link rel="stylesheet" href="main.css">
@@ -11,7 +17,7 @@
 </head>
 <body>
 <script type="text/ng-template" id="prop-block">
-  <button type="button" class="btn btn-default btn-sm" ng-click="addNode(activeNode)" title="Add Property">
+  <button type="button" class="btn btn-default btn-xs" ng-click="addNode(activeNode)" title="Add Property">
     Add Property
   </button>
   <table class="property-table">
@@ -19,14 +25,14 @@
       <td style="text-align:left;font-weight:bold;padding: 5px 4px;">
         <span>{{node.name}}:</span>
       </td>
-      <td>
+      <td style="padding-right: 5px;">
         <span class="value" editable-text="node.value" onbeforesave="updateNode(node,$data)">{{node.value || '(empty)'}}</span>
       </td>
       <td>
-        <button type="button" class="btn btn-default btn-sm" ng-click="copyNode(node)" title="Copy Node">
+        <button type="button" class="btn btn-default btn-xs" ng-click="copyNode(node)" title="Copy Node">
           <span class="glyphicon glyphicon-floppy-open"></span>
         </button>
-        <button type="button" class="btn btn-default btn-sm" ng-click="deleteNode(node)" title="Delete Node">
+        <button type="button" class="btn btn-default btn-xs" ng-click="deleteNode(node)" title="Delete Node">
           <span class="glyphicon glyphicon-trash"></span>
         </button>
       </td>
@@ -37,14 +43,14 @@
   <span ng-click="toggleNode(node)" class="glyphicon glyphicon-minus toggle-icon" ng-if="node.open"></span>
   <span ng-click="toggleNode(node)" class="glyphicon glyphicon-plus toggle-icon" ng-if="!node.open"></span>
   <a href="" ng-click="setActiveNode(node)" ng-if="node.dir" class="{{node.key == activeNode.key ? 'active-node' : ''}}">{{node.name}}</a> 
-  <div class="btn-group">
-    <button ng-if="node.open" ng-click="createDir(node)" class="btn btn-default btn-sm" type="button" title="Create Directory">
+  <div class="btn-group" ng-if="node.key == activeNode.key">
+    <button ng-if="node.open" ng-click="createDir(node)" class="btn btn-default btn-xs" type="button" title="Create Directory">
       <span class="glyphicon glyphicon-plus"></span>
     </button>
-    <button ng-if="node.open" ng-click="copyDir(node)" class="btn btn-default btn-sm" type="button" title="Copy Directory">
+    <button ng-if="node.open" ng-click="copyDir(node)" class="btn btn-default btn-xs" type="button" title="Copy Directory">
       <span class="glyphicon glyphicon-floppy-open"></span>
     </button>
-    <button ng-if="node.open" type="button" class="btn btn-default btn-sm" ng-click="deleteDir(node)" title="Delete Directory">
+    <button ng-if="node.open" type="button" class="btn btn-default btn-xs" ng-click="deleteDir(node)" title="Delete Directory">
       <span class="glyphicon glyphicon-trash"></span>
     </button>
   </div>
@@ -52,28 +58,34 @@
     <li ng-repeat="node in node.nodes | orderBy:'name'" ng-include="'tree-item'" ng-if="node.dir"></li>
   </ul>
 </script>
+
   <div class="container-fluid" role="main" ng-controller="NodeCtrl">
     <h1 class="warning">etcd browser</h1>
-    <form ng-submit="submit()">
-      <div class="input-group" ng-submit="submit()">
-        <input type="text" class="form-control" ng-model="urlPrefix" placeholder="http://localhost:4001/v2/keys">
-        <span class="input-group-btn">
-          <button class="btn btn-default" type="submit">Go!</button>
-        </span>
-      </div>
-    </form>
-    <div ng-if="error" class="alert alert-danger alert-dismissible" role="alert">{{error}}</div>
     <div class="row">
+      <div class="col-md-12">
+		    <form ng-submit="submit()">
+		      <div class="input-group" ng-submit="submit()">
+		        <input type="text" class="form-control" ng-model="urlPrefix" placeholder="http://localhost:4001">
+		        <span class="input-group-btn">
+		          <button class="btn btn-default" type="submit">Go!</button>
+		        </span>
+		      </div>
+		    </form>
+	    </div>
+    </div>
+    <div ng-if="error" class="alert alert-danger alert-dismissible" role="alert">{{error}}</div>
+    <div class="row top-buffer">
       <div class="col-md-4">
         <div class="tree prop-block" >
           <ul>
             <li>
               <a href="#" ng-click="setActiveNode(root)" class="{{root.key == activeNode.key ? 'active-node' : ''}}">root</a> 
               <div class="btn-group">
-                <button ng-click="createDir(root)" class="btn btn-default btn-sm" type="button">
+                <button ng-click="createDir(root)" class="btn btn-default btn-xs" type="button" title="Create Directory">
                   <span class="glyphicon glyphicon-plus"></span>
                 </button>
               </div>
+              <button class="btn btn-primary btn-xs" data-toggle="modal" data-target="#myModal" ng-click="loadStats()">Stats</button>
               <ul>
                 <li ng-repeat="node in root.nodes | orderBy:'name'" ng-include="'tree-item'" ng-if="node.dir"></li>
               </ul>
@@ -82,10 +94,29 @@
         </div>
       </div>
       <div class="col-md-8">
-        <div class="prop-block" ng-include="'prop-block'" ng-if="activeNode">
+        <div class="prop-block" ng-include="'prop-block'" ng-if="activeNode"></div>
       </div>
     </div>
-  </div>
+		<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+		        <h4 class="modal-title" id="myModalLabel">Stats</h4>
+		      </div>
+		      <div class="modal-body">
+		        <pre>{{stats.store}}</pre>
+		        <pre>{{stats.leader}}</pre>
+		        <pre>{{stats.self}}</pre>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+	</div>
+
 </body>
 </html>
 
