@@ -1,12 +1,16 @@
 
-var app = angular.module("app", ["xeditable"]);
+var app = angular.module("app", ["xeditable","ngCookies"]);
 
-app.controller('NodeCtrl', ['$scope','$http', function($scope,$http) {
+app.controller('NodeCtrl', ['$scope','$http','$cookies', function($scope,$http,$cookies) {
   var keyPrefix = '/v2/keys',
       statsPrefix = '/v2/stats';
   
-  $scope.urlPrefix = "http://localhost:4001";
-
+  if($cookies.urlPrefix){
+    $scope.urlPrefix = $cookies.urlPrefix;
+  } else {
+    $scope.urlPrefix = "http://localhost:4001";
+  }
+  
   $scope.setActiveNode = function(node){
     $scope.activeNode = node;
     if(!node.open){
@@ -50,6 +54,8 @@ app.controller('NodeCtrl', ['$scope','$http', function($scope,$http) {
     }
   }  
   $scope.submit = function(){
+    console.log($cookies);
+    $cookies.urlPrefix = $scope.urlPrefix;
     $scope.root = {key:'/'};
     delete $scope.activeNode;
     $scope.loadNode($scope.root);
