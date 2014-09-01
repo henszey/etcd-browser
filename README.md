@@ -13,6 +13,5 @@
 * host on the same server as etcd
 
 ## TODO
-* Implement missing features
-* Polish
-* change ajax calls to $http
+* Implement missing features (TTL)
+* Ajax Basic Auth
