@@ -44,7 +44,7 @@
 <script type="text/ng-template" id="tree-item">
   <span ng-click="toggleNode(node)" class="glyphicon glyphicon-minus toggle-icon" ng-if="node.open"></span>
   <span ng-click="toggleNode(node)" class="glyphicon glyphicon-plus toggle-icon" ng-if="!node.open"></span>
-  <a href="" ng-click="setActiveNode(node)" ng-if="node.dir" class="{{node.key == activeNode.key ? 'active-node' : ''}}">{{node.name}}</a> 
+  <a href="" ng-click="setActiveNode(node)" ng-if="node.dir" class="{{node.key == activeNode.key ? 'active-node' : ''}}">{{node.name}}</a>
   <div class="btn-group" ng-if="node.key == activeNode.key">
     <button ng-if="node.open" ng-click="createDir(node)" class="btn btn-default btn-xs" type="button" title="Create Directory">
       <span class="glyphicon glyphicon-plus"></span>
@@ -77,11 +77,11 @@
     </div>
     <div ng-if="error" class="alert alert-danger alert-dismissible" role="alert">{{error}}</div>
     <div class="row top-buffer">
-      <div class="col-md-4">
+      <div class="col-md-6">
         <div class="tree prop-block" >
           <ul>
             <li>
-              <a href="#" ng-click="setActiveNode(root)" class="{{root.key == activeNode.key ? 'active-node' : ''}}">root</a> 
+              <a href="#" ng-click="setActiveNode(root)" class="{{root.key == activeNode.key ? 'active-node' : ''}}">root</a>
               <div class="btn-group">
                 <button ng-click="createDir(root)" class="btn btn-default btn-xs" type="button" title="Create Directory">
                   <span class="glyphicon glyphicon-plus"></span>
@@ -95,7 +95,7 @@
           </ul>
         </div>
       </div>
-      <div class="col-md-8">
+      <div class="col-md-6">
         <div class="prop-block" ng-include="'prop-block'" ng-if="activeNode"></div>
       </div>
     </div>
@@ -121,5 +121,3 @@
 
 </body>
 </html>
-
-

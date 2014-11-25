@@ -2,7 +2,7 @@
 
 .tree li {
     margin: 0px 0;
-  
+
   list-style-type: none;
     position: relative;
   padding: 20px 5px 0px 5px;
@@ -11,22 +11,22 @@
 
 .tree li::before{
     content: '';
-  position: absolute; 
+  position: absolute;
     top: 0;
-  width: 1px; 
+  width: 1px;
     height: 100%;
-  right: auto; 
+  right: auto;
     left: -20px;
   border-left: 1px solid #ccc;
     bottom: 50px;
 }
 .tree li::after{
     content: '';
-  position: absolute; 
-    top: 30px; 
-  width: 25px; 
+  position: absolute;
+    top: 30px;
+  width: 25px;
     height: 20px;
-  right: auto; 
+  right: auto;
     left: -20px;
   border-top: 1px solid #ccc;
 }
@@ -47,20 +47,20 @@
   border: 0;
 }
 
-.tree li:last-child::before{ 
+.tree li:last-child::before{
       height: 30px;
 }
 
-.tree li a:hover, 
+.tree li a:hover,
 .tree li a:hover+ul li a,
 .tree li a:hover~.prop-block {
   background: #c8e4f8; color: #000; border: 1px solid #94a0b4;
 }
 
 
-.tree li a:hover+ul li::after, 
-.tree li a:hover+ul li::before, 
-.tree li a:hover+ul::before, 
+.tree li a:hover+ul li::after,
+.tree li a:hover+ul li::before,
+.tree li a:hover+ul::before,
 .tree li a:hover+ul ul::before{
   border-color:  #94a0b4;
 }
@@ -98,4 +98,29 @@
     background: #BBBBBB;
 }
 
+.prop-block {
+  height: 100%;
+  overflow: auto;
+}
 
+.col-md-6 .col-md-6 {
+  height: calc(100% - 140px);
+}
+
+.row.top-buffer {
+  height: 100%;
+}
+
+.container-fluid.ng-scope {
+  height: 100%;
+}
+
+html, body {
+  height: 100%;
+}
+
+.alert {
+  position: absolute;
+  right: 1px;
+  top: 1px;
+}
