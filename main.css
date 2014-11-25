@@ -124,3 +124,7 @@ html, body {
   right: 1px;
   top: 1px;
 }
+
+td {
+  white-space: nowrap;
+}

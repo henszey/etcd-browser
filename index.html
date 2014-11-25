@@ -24,12 +24,6 @@
   </button>
   <table class="property-table">
     <tr ng-repeat="node in activeNode.nodes | orderBy:'name'" ng-if="!node.dir" ng-class-odd="'odd-row'">
-      <td style="text-align:left;font-weight:bold;padding: 5px 4px;">
-        <span>{{node.name}}:</span>
-      </td>
-      <td style="padding-right: 5px;">
-        <span class="value" editable-text="node.value" onbeforesave="updateNode(node,$data)">{{node.value || '(empty)'}}</span>
-      </td>
       <td>
         <button type="button" class="btn btn-default btn-xs" ng-click="copyNode(node)" title="Copy Node">
           <span class="glyphicon glyphicon-floppy-open"></span>
@@ -37,6 +31,12 @@
         <button type="button" class="btn btn-default btn-xs" ng-click="deleteNode(node)" title="Delete Node">
           <span class="glyphicon glyphicon-trash"></span>
         </button>
+      </td>
+      <td style="text-align:left;font-weight:bold;padding: 5px 4px;">
+        <span>{{node.name}}:</span>
+      </td>
+      <td style="padding-right: 5px;">
+        <span class="value" editable-text="node.value" onbeforesave="updateNode(node,$data)">{{node.value || '(empty)'}}</span>
       </td>
     </tr>
   </table>
