@@ -8,7 +8,7 @@ app.controller('NodeCtrl', ['$scope','$http','$cookies', function($scope,$http,$
   if($cookies.urlPrefix){
     $scope.urlPrefix = $cookies.urlPrefix;
   } else {
-    $scope.urlPrefix = "http://localhost:4001";
+    $scope.urlPrefix = "http://" + document.location.host;
   }
 
   $scope.getPrefix = function() {
