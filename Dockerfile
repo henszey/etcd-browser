@@ -13,4 +13,4 @@ ADD . /app/
 WORKDIR /app
 EXPOSE 8000
 
-CMD ["node", "server.js"]
+CMD ["nodejs", "server.js"]
