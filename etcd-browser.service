@@ -1,0 +1,17 @@
+[Unit]
+Description=etcd-browser
+After=docker.service etcd.service
+Requires=docker.service etcd.service
+
+
+[Service]
+TimeoutStartSec=0
+
+# build image if theres none
+ExecStartPre=/bin/sh -c "/usr/bin/docker images | grep etcd-browser || /usr/bin/docker build -t etcd-browser github.com/psi-4ward/etcd-browser.git"
+
+# run or start the container
+ExecStart=/bin/sh -c "/usr/bin/docker ps -a | grep etcd-browser && /usr/bin/docker start -a etcd-browser || /usr/bin/docker run --name=etcd-browser -p 0.0.0.0:8000:8000 etcd-browser"
+
+ExecStop=/usr/bin/docker stop etcd-browser
+
