@@ -59,7 +59,24 @@ function proxy(client_req, client_res) {
     path: client_req.url,
     method: client_req.method
   }, function(res) {
-    res.pipe(client_res, {end: true});
+    // if etcd returns that the requested  page  has been moved
+    // to a different location, indicates that the node we are
+    // querying is not the leader. This will redo the request
+    // on the leader which is reported by the Location header
+    if (res.statusCode === 307) {
+        newHost = url.parse(res.headers['location']).hostname;
+        client_req.pipe(http.request({
+            hostname: newHost,
+            port: etcdPort,
+            path: client_req.url,
+            method: client_req.method
+        }, function(res) {
+            console.log('Got response: ' + res.statusCode);
+            res.pipe(client_res, {end: true});
+        }, {end: true}));
+    } else {
+        res.pipe(client_res, {end: true});
+    }
   }, {end: true}));
 }
 
