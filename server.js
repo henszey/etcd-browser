@@ -1,7 +1,31 @@
-var http = require('http');
 var url = require('url');
 var path = require('path');
 var fs = require('fs');
+var http = require('http');
+
+var ca_file = process.env.ETCDCTL_CA_FILE || false;
+var key_file = process.env.ETCDCTL_KEY_FILE || false;
+var cert_file = process.env.ETCDCTL_CERT_FILE || false;
+
+var requester = http.request;
+if(cert_file) {
+  // use https requests if theres a cert file
+  var https = require('https');
+  requester = https.request;
+
+  if(!fs.existsSync(cert_file)) {
+    console.error('CERT FILE', cert_file, 'not found!');
+    process.exit(1);
+  }
+  if(!fs.existsSync(key_file)) {
+    console.error('KEY FILE', key_file, 'not found!');
+    process.exit(1);
+  }
+  if(!fs.existsSync(ca_file)) {
+    console.error('CA FILE', ca_file, 'not found!');
+    process.exit(1);
+  }
+}
 
 var etcdHost = process.env.ETCD_HOST || '172.17.42.1';
 var etcdPort = process.env.ETCD_PORT || 4001;
@@ -9,6 +33,8 @@ var serverPort = process.env.SERVER_PORT || 8000;
 var publicDir = 'frontend';
 var authUser = process.env.AUTH_USER;
 var authPass = process.env.AUTH_PASS;
+
+
 
 var mimeTypes = {
   "html": "text/html",
@@ -53,24 +79,28 @@ http.createServer(function serverFile(req, res) {
 
 
 function proxy(client_req, client_res) {
-  client_req.pipe(http.request({
+  var opts = {
     hostname: etcdHost,
     port: etcdPort,
     path: client_req.url,
     method: client_req.method
-  }, function(res) {
+  };
+
+  // https/certs supprt
+  if(cert_file) {
+    opts.key = fs.readFileSync(key_file);
+    opts.ca = fs.readFileSync(ca_file);
+    opts.cert = fs.readFileSync(cert_file);
+  }
+
+  client_req.pipe(requester(opts, function(res) {
     // if etcd returns that the requested  page  has been moved
     // to a different location, indicates that the node we are
     // querying is not the leader. This will redo the request
     // on the leader which is reported by the Location header
     if (res.statusCode === 307) {
-        newHost = url.parse(res.headers['location']).hostname;
-        client_req.pipe(http.request({
-            hostname: newHost,
-            port: etcdPort,
-            path: client_req.url,
-            method: client_req.method
-        }, function(res) {
+        opts.hostname = url.parse(res.headers['location']).hostname;
+        client_req.pipe(requester(opts, function(res) {
             console.log('Got response: ' + res.statusCode);
             res.pipe(client_res, {end: true});
         }, {end: true}));
