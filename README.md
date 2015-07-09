@@ -26,3 +26,8 @@ You can configure the builtin server using environment variables:
  * ETCD_HOST: IP of the etcd host the internal proxy should use [172.17.42.1]
  * ETCD_PORT: Port of the etcd daemon [4001]
  * SERVER_PORT: Port of builtin server
+ 
+If you use a secured etcd:
+ * ETCDCTL_CA_FILE
+ * ETCDCTL_KEY_FILE
+ * ETCDCTL_CERT_FILE
